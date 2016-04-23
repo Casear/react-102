@@ -25,7 +25,6 @@ function create(text) {
   };
 }
 
-create('test')
 /**
  * Update a TODO item.
  * @param  {string} id

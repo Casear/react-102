@@ -3,6 +3,7 @@ import TodoStore from '../stores/TodoStore';
 import TodoActions from '../actions/TodoActions'
 import {TodoItem} from '../components/TodoItem'
 import {TodoTextInput} from '../components/TodoTextInput'
+import { Link } from 'react-router'
 function getTodoState() {
   return {
     allTodos: TodoStore.getAll(),
@@ -30,8 +31,9 @@ class TodoApp extends Component {
         for (var key in allTodos) {
           todos.push(<TodoItem key={key} todo={allTodos[key]} />);
         }
-        return  <div>
-                    <h2 class="ui dividing header">To Do List</h2>
+        return  <div className='ui container'>
+                    <h2 className="ui dividing header">To Do List</h2>
+                    
                     <div className='ui action input'>
                         <TodoTextInput id='newTodo' onSave={this._onSave} />
                     </div>
