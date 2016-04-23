@@ -1,7 +1,22 @@
+'use strict';
 import React, { Component } from 'react';
 import {TodoTextInput} from './TodoTextInput'
-import  TodoActions from '../actions/TodoActions'
-export class TodoItem extends Component {
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as TodoActions from '../reducers/todo/TodoActions';
+function mapStateToProps(state) {
+  return {
+      ...state
+  }
+};
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+    todoActions: bindActionCreators(TodoActions, dispatch)
+  };
+}
+class TodoItem extends Component {
   constructor(props) {
     super(props);
     this.state = {isEditing: false};
@@ -11,7 +26,7 @@ export class TodoItem extends Component {
     this._onSave = this._onSave.bind(this)
   }
   render() {
-    if(this.props.todo.complete){
+    if(this.props.data.complete){
         var check = 
             <button className="ui icon button">
                 <i className="green heart icon" onClick={this._onToggleComplete} ></i>
@@ -22,24 +37,25 @@ export class TodoItem extends Component {
                 <i className="red heart icon" onClick={this._onToggleComplete} ></i>
             </button>
     }
+    
     if (this.state.isEditing) {
       var input =
         <button className="ui icon button">
-            <TodoTextInput id={this.props.todo.id} onSave={this._onSave}
-              value={this.props.todo.text}
+            <TodoTextInput id={this.props.data.id} onSave={this._onSave}
+              value={this.props.data.text}
             />
         </button>
         
     }else{
       var input = 
         <button className="ui labeled icon button" onDoubleClick={this._onDoubleClick}>
-            {this.props.todo.text}
+            {this.props.data.text}
         </button>
         
     }
 
     return (
-      <div key={this.props.todo.id}>
+      <div key={this.props.data.id}>
         <div className='ui action input'>
             {check}
             {input}
@@ -49,16 +65,20 @@ export class TodoItem extends Component {
     );
   }
   _onSave(text) {
-    TodoActions.updateText(this.props.todo.id, text);
+    
+    this.props.todoActions.updateText(this.props.data.id, text);
     this.setState({isEditing: false});
   }
   _onDestroy() {
-    TodoActions.destroy(this.props.todo.id);
+    this.props.todoActions.destroy(this.props.data.id);
+    
   }
   _onToggleComplete() {
-    TodoActions.toggleComplete(this.props.todo);
+    this.props.todoActions.toggleComplete(this.props.data);
+    
   }
   _onDoubleClick() {
     this.setState({isEditing: true});
   }
 }
+export default connect(mapStateToProps, mapDispatchToProps)(TodoItem);

@@ -1,35 +1,38 @@
 import React, { Component } from 'react';
-import TodoStore from '../stores/TodoStore';
-import TodoActions from '../actions/TodoActions'
-import {TodoItem} from '../components/TodoItem'
+import TodoItem from '../components/TodoItem'
 import {TodoTextInput} from '../components/TodoTextInput'
 import { Link } from 'react-router'
-function getTodoState() {
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as TodoActions from '../reducers/todo/TodoActions';
+const actions = [
+  TodoActions
+];
+function mapStateToProps(state) {
   return {
-    allTodos: TodoStore.getAll(),
-    areAllComplete: TodoStore.areAllComplete()
+      ...state
+  }
+}
+function mapDispatchToProps(dispatch) {
+  return {
+    todoActions: bindActionCreators(TodoActions, dispatch)
   };
 }
+
+
 class TodoApp extends Component {
     constructor(props) {
         super(props);
-        this.state = getTodoState()
         this._onChange = this._onChange.bind(this)
         this._onSave = this._onSave.bind(this)
     }
-    componentDidMount() {
-        TodoStore.addChangeListener(this._onChange)
-    }
-
-    componentWillUnmount() {
-        TodoStore.removeChangeListener(this._onChange);
-    }
+    
     render() {
-        var allTodos = this.state.allTodos;
+        var allTodos = this.props.todo.todos;
         var todos = [];
 
         for (var key in allTodos) {
-          todos.push(<TodoItem key={key} todo={allTodos[key]} />);
+          todos.push(<TodoItem key={key} data={allTodos[key]} />);
         }
         return  <div className='ui container'>
                     <h2 className="ui dividing header">To Do List</h2>
@@ -41,11 +44,10 @@ class TodoApp extends Component {
                 </div>;
     }
     _onSave(text){
-        TodoActions.create(text);
+        this.props.todoActions.create(text)
     }
     _onChange() {
         this.setState(getTodoState());
     }
 }
-
-module.exports = TodoApp
+export default connect(mapStateToProps, mapDispatchToProps)(TodoApp);
