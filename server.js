@@ -12,7 +12,18 @@ app.use(require('webpack-dev-middleware')(compiler, {
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
-
+app.get('/api/todos',function(req, res){
+    var todos = {}
+    for(var i=0;i<10;i++){
+        var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+        todos[id] = {
+            id:id,
+            text:i+' todo content',
+            complete:false
+        }
+    }
+    res.json(todos)
+})
 app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });

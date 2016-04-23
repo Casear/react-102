@@ -7,6 +7,8 @@
  * 
  */
 'use strict';
+import fetch from 'isomorphic-fetch'
+import 'babel-polyfill'
 
 /**
  * ## Imports
@@ -14,6 +16,7 @@
  * The actions supported
  */
 const {
+  TODO_FETCH,
   TODO_CREATE,
   TODO_COMPLETE,
   TODO_DESTROY,
@@ -28,7 +31,28 @@ export function create(text) {
       text: text
     };
 }
-
+function fetchToDo() {
+  return fetch('http://localhost:3000/api/todos')
+}
+export function fetchData(todos) {
+   return {
+      type: TODO_FETCH,
+      todos: todos
+    };
+}
+export function fetchAsync() {
+    return dispatch => {
+      fetchToDo().then(
+        function(response){
+          return response.json();
+        }
+      ).then(function(data){
+        
+        dispatch(fetchData(data))
+      })
+      
+    };
+}
   /**
    * @param  {string} id The ID of the ToDo item
    * @param  {string} text

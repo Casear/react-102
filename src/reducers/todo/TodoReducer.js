@@ -2,6 +2,7 @@
 'use strict';
 var assign = require('object-assign');
 const {
+  TODO_FETCH,
   TODO_CREATE,
   TODO_COMPLETE,
   TODO_DESTROY,
@@ -16,6 +17,9 @@ const initialState = {
 
 export default function TodoReducer(state = initialState, action) {
   switch (action.type) {
+  case TODO_FETCH:
+    console.dir(action.todos)
+    return assign({},state,{todos:action.todos})
   case TODO_CREATE:
     var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
     var s = assign({},state,{})
@@ -25,7 +29,7 @@ export default function TodoReducer(state = initialState, action) {
       complete: false,
       text: action.text
     }
-    console.dir(s.todos)
+
     return s
     /**
      * ### set the version in the state

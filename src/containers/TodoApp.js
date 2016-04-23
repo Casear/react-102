@@ -26,7 +26,10 @@ class TodoApp extends Component {
         this._onChange = this._onChange.bind(this)
         this._onSave = this._onSave.bind(this)
     }
-    
+    componentDidMount(){
+        this.props.todoActions.fetchAsync()
+
+    }
     render() {
         var allTodos = this.props.todo.todos;
         var todos = [];
